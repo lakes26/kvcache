@@ -1,7 +1,12 @@
 cc_binary(
-  name = "server_main",
+  name = "server",
   srcs = ["server.cc"],
-  deps = ["//proto:kv_lib"],
+  defines = ["BAZEL_BUILD"],
+  deps = [
+      "//proto:kv_cc_grpc",
+      "@com_github_grpc_grpc//:grpc++",
+  ],
+  copts = ["-std=c++20"],
 )
 
 
