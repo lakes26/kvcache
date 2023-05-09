@@ -1,24 +1,19 @@
-load("@io_bazel_rules_docker//cc:image.bzl", "cc_image")
 
 cc_library(
-  name = "server",
+  name = "client",
   visibility = ["//visibility:public"],
   srcs = [
-    "server.cc",
-    "shard.cc",
-    "shard.h",
+    "client.cc",
   ],
   hdrs = [
-    "server.h",
+    "client.h",
   ],
   deps = [
       "//proto:kv_cc_grpc",
       "@com_github_grpc_grpc//:grpc++",
+      "//util:util",
       "//shardmap:shardmap",
+      "//clientpool:clientpool",
   ],
 )
 
-cc_image(
-   name = "server_image",
-   binary = "server",
-)

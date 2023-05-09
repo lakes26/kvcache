@@ -11,6 +11,8 @@
 #include "proto/kv.grpc.pb.h"
 #endif
 
+#include "server.h"
+
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
@@ -25,60 +27,40 @@ using kv::GetShardContentsRequest;
 using kv::GetShardContentsResponse;
 using kv::Kv;
 
-class KvServerImpl final : public Kv::Service {
-  
-  Status Get(
-    ServerContext* context,
-    const GetRequest* request,
-    GetResponse* response
-  ) override {
-    return Status::OK;
-  }
- 
-  Status Set(
-    ServerContext* context,
-    const SetRequest* request,
-    SetResponse* response
-  ) override {
-    return Status::OK;
-  }
 
-  Status Delete(
-    ServerContext* context,
-    const DeleteRequest* request,
-    DeleteResponse* response
-  ) override {
-    return Status::OK;
-  }
-  
-  Status GetShardContents(
-    ServerContext* context,
-    const GetShardContentsRequest* request,
-    GetShardContentsResponse* response
-  ) override {
-    return Status::OK;
-  }
-};
+KvServerImpl::KvServerImpl(ShardMap* shardMap) {
+  this->shardMap = shardMap;
+}
  
-void RunServer() {
-  std::string server_address("0.0.0.0:50051");
-  KvServerImpl service;
-  ServerBuilder builder;
-
-  // Listen on the given address without any authentication mechanism.
-  builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-  // Register "service" as the instance through which we'll communicate with
-  // clients. In this case it corresponds to an *synchronous* service.
-  builder.RegisterService(&service);
-  // Finally assemble the server.
-  std::unique_ptr<Server> server(builder.BuildAndStart());
-  std::cout << "Server listening on " << server_address << std::endl;
-  // Wait for the server to shutdown. Note that some other thread must be
-  // responsible for shutting down the server for this call to ever return.
-  server->Wait();
+Status KvServerImpl::Get(
+  ServerContext* context,
+  const GetRequest* request,
+  GetResponse* response
+) {
+  return Status::OK;
 }
 
-int main(int argc, char** argv) {
-  RunServer();
-  return 0;
+Status KvServerImpl::Set(
+  ServerContext* context,
+  const SetRequest* request,
+  SetResponse* response
+) {
+  return Status::OK;
 }
+
+Status KvServerImpl::Delete(
+  ServerContext* context,
+  const DeleteRequest* request,
+  DeleteResponse* response
+) {
+  return Status::OK;
+}
+
+Status KvServerImpl::GetShardContents(
+  ServerContext* context,
+  const GetShardContentsRequest* request,
+  GetShardContentsResponse* response
+) {
+  return Status::OK;
+}
+ 
