@@ -7,6 +7,10 @@
 #include "shardmap/shardmap.h"
 #include "clientpool.h"
 
+#include <string>
+#include <memory>
+#include <stdexcept>
+
 
 using kv::Kv;
 
@@ -50,7 +54,7 @@ std::shared_ptr<Kv::Stub> ClientPool::GetClient(std::string nodeName) {
 
     if (it2 == nodeInfoMap.end()) {
         this->mu.Unlock();
-        return NULL;
+        throw std::runtime_error("no node by that name in the shardmap"); 
     }
 
     NodeInfo nodeInfo = it2->second;

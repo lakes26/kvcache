@@ -39,7 +39,6 @@ KvServerImpl::KvServerImpl(std::string nodeName, ShardMap* shardMap) {
 KvServerImpl::~KvServerImpl() {
   this->isRunning.store(false);
   this->janitor.join();
-  std::cout << "Janitor Safely Ended" << std::endl;
 }
  
 // Get Section -------------------------------

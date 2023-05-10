@@ -14,6 +14,8 @@ cc_library(
   deps = [
       "//proto:kv_cc_grpc",
       "@com_github_grpc_grpc//:grpc++",
+      "@com_google_absl//absl/synchronization",
+      "@com_google_absl//absl/time",
       "//shardmap:shardmap",
       "//util:util",
   ],

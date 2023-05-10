@@ -2,8 +2,9 @@
 #include <tuple>
 #include <cstdint>
 #include <map>
-#include <iostream>
 
+#include "absl/synchronization/mutex.h"
+#include "absl/time/time.h"
 #include "shard.h"
 
 
@@ -56,11 +57,6 @@ void KvShard::Clean() {
 
   std::map<std::string, CacheRecord> newData;
   for (auto [key, value] : this->data) {
-    std::string expiration_time = absl::FormatTime("%Y-%m-%d %H:%M:%S", value.expirationTime, absl::UTCTimeZone());
-    std::string current_time = absl::FormatTime("%Y-%m-%d %H:%M:%S", currentTime, absl::UTCTimeZone());
-
-    //std::cout << "current_time: " << current_time << " - expiration_time: " << expiration_time << std::endl;
-
     if(currentTime < value.expirationTime) {
       newData[key] = value;
     }
