@@ -41,12 +41,12 @@ KvClient::KvClient(ShardMap* shardMap, ClientPool* clientPool) {
   this->clientPool = clientPool;
 }
 
-void KvClient::Get(const std::string key) {
+std::string KvClient::Get(const std::string key) {
   GetRequest request;
-  request.set_key("hello");
+  request.set_key(key);
   GetResponse response;
   ClientContext context;
-
+  return "test_response";
 }
 
 void KvClient::Set(const std::string key, const std::string value, absl::Duration ttl) {
@@ -57,6 +57,7 @@ void KvClient::Delete(const std::string key) {
 ;
 }
 
+/*
 int main(int argc, char** argv) {
 
   auto channel = grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
@@ -67,3 +68,6 @@ int main(int argc, char** argv) {
 
   return 0;
 }
+*/
+
+

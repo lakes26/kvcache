@@ -12,6 +12,7 @@ cc_library(
   deps = [
       "//proto:kv_cc_grpc",
       "@com_github_grpc_grpc//:grpc++",
+      "@com_github_nlohmann_json//:json",
   ],
 )
 

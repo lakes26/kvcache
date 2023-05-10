@@ -10,7 +10,7 @@
 class KvClient {
 public:
     KvClient(ShardMap* shardMap, ClientPool* clientPool);
-    void Get(const std::string key);
+    std::string Get(const std::string key);
     void Set(const std::string key, const std::string value, absl::Duration ttl);
     void Delete(const std::string key);
 private:

@@ -2,17 +2,22 @@
 #define SHARDMAP_H
 
 #include <map>
+#include <string>
 #include <vector>
+#include "nlohmann/json.hpp"
+
+using nlohmann::json;
 
 struct NodeInfo {
     std::string address;
-    int32_t port;
+    int port;
 };
 
 /*
  * Internal state of the ShardMap, which may be updated as
  * shards are moved around.
  */
+
 struct ShardMapState {
     std::map<std::string, NodeInfo> nodes;
     std::map<int, std::vector<std::string>> shardsToNodes;

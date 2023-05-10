@@ -3,6 +3,7 @@
 
 
 #include "shardmap/shardmap.h"
+#include "proto/kv.grpc.pb.h"
 
 class ClientPool {
 private:

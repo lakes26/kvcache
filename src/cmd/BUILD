@@ -7,6 +7,10 @@ cc_binary(
   deps = [
       "//client:client",
       "@com_google_absl//absl/flags:flag",
+      "@com_google_absl//absl/flags:parse",
+      "@com_github_google_glog//:glog",
+      "//shardmap:shardmap",
+      "//clientpool:clientpool",
   ],
 )
 
