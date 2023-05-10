@@ -6,6 +6,7 @@
 #include <string>
 #include "shardmap/shardmap.h"
 
+#include <csignal>
 #include <fstream>
 #include <streambuf>
 #include <iostream>
@@ -15,6 +16,8 @@ ABSL_FLAG(std::string, shardmap, "",
           "Path to a JSON file which describes the shard map");
 ABSL_FLAG(std::string, node, "",
           "Name of the node (must match in shard map file)");
+
+std::unique_ptr<grpc::Server> server;
 
 void RunServer() {
   
@@ -52,7 +55,7 @@ void RunServer() {
   builder.RegisterService(&service);
 
   // Finally assemble the server.
-  std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+  server = builder.BuildAndStart();
   LOG(INFO) << "Server listening on " << server_address << std::endl;
 
   // Wait for the server to shutdown. Note that some other thread must be
@@ -60,10 +63,15 @@ void RunServer() {
   server->Wait();
 }
 
+void signalHandler(int signum) {
+  server->Shutdown();
+}
+
 int main(int argc, char** argv) {
   absl::ParseCommandLine(argc, argv);
   google::InitGoogleLogging(argv[0]);
   google::InstallFailureSignalHandler();
+  signal(SIGINT, signalHandler);
 
   RunServer();
   return 0;

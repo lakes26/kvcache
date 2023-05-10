@@ -23,6 +23,7 @@ public:
     std::tuple<std::string, bool> Get(const std::string key);
     void Set(const std::string key, const std::string value, int64_t ttlMs);
     void Delete(const std::string key);
+    void Clean();
 };
 
 #endif

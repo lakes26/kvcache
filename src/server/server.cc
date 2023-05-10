@@ -5,7 +5,10 @@
 #include <vector>
 #include <string>
 #include <tuple>
+#include <atomic>
+#include <thread>
 
+#include "absl/time/time.h"
 #include "util/util.h"
 #include "shardmap/shardmap.h"
 #include "server.h"
@@ -28,6 +31,15 @@ KvServerImpl::KvServerImpl(std::string nodeName, ShardMap* shardMap) {
   this->nodeName = nodeName;
   this->shardMap = shardMap;
   this->shards = std::vector<KvShard>(shardMap->numShards());
+  this->isRunning.store(true);
+
+  this->janitor = std::thread(&KvServerImpl::ttlJanitor, this);
+}
+
+KvServerImpl::~KvServerImpl() {
+  this->isRunning.store(false);
+  this->janitor.join();
+  std::cout << "Janitor Safely Ended" << std::endl;
 }
  
 // Get Section -------------------------------
@@ -101,6 +113,20 @@ Status KvServerImpl::GetShardContents(
   return Status::OK;
 }
 
+// TTL Section ------------------------------ 
+
+void KvServerImpl::ttlJanitor() {
+  absl::Time timeToClean = absl::Now();
+  while(this->isRunning.load() == true) {
+    if (absl::Now() > timeToClean) {
+      for (int i = 0; i < this->shardMap->numShards(); i++) {
+        this->shards[i].Clean();
+      }
+      timeToClean = absl::Now();
+    }
+    absl::SleepFor(absl::Milliseconds(10));
+  }
+}
 
 bool KvServerImpl::isShardHosted(int id) {
   std::vector<int> v = this->shardMap->shardsForNode(this->nodeName);
@@ -110,4 +136,6 @@ bool KvServerImpl::isShardHosted(int id) {
     return false;
   }
 }
+
+
  
