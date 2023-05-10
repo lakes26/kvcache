@@ -72,9 +72,6 @@ std::tuple<std::string, bool, grpc::Status> KvClient::Get(const std::string key)
     std::shared_ptr<Kv::Stub> stub;
     try {
       stub = this->clientPool->GetClient(node);
-      if (!stub) {
-        continue;
-      }
     } catch (std::exception e) {
       LOG(ERROR) << "Clientpool unable to return a stub" << e.what() << std::endl; 
       continue;

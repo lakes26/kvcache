@@ -1,2 +1,55 @@
+ESTIMATE of time to comlete assignment: 50 hours
 
-04/29   12:00pm   2:00      Worked on setting up my project with Bazel and generating protobuf.:
+				Time			Time		
+Date		Started		Spent			Work completed
+-----		-------		------		--------------
+04/29   12:00pm   4:00      Started looking into Bazel for a build system (completely new) and messed around
+														With the demos a bit;
+04/30		01:30pm		3:00			Started reading up on C++ (new language for me) using effective modern C++
+04/30		08:30pm		4:00			Continued reading from effective modern C++	and read the grpc guide for C++;
+05/02		08:00am		4:00			Reviewed my implementation of lab4 and all the other parts of the code that was implemented
+														for us. There was a lot more that would need to be implemented than I originally realized so
+														I modified my implementation goals for the project.
+05/04		09:00am		4:30			Started by figuring out gRPC integration with bazel for generating server and client stubs.
+														Had some issues with the bazel version that my machine was defaulting to so added an explicit
+														version number
+05/06		10:30am		6:00			Tried to get docker to integrate with Bazel. I was planning on my submission being a docker
+														image so that if could be easily run by you guys but I couldn't figure out what these Bazel 
+														errors were. I think there was some stuff going on with diamond dependencies.
+05/07		7:00am		4:15			Started by implementing the main binaries for server and client. Had to research abseil flags
+														as well as how to start the grpc server and how to gracefully terminate it.
+05/09		8:00am		2:00			Started to fill out some of the shard map implementation details.
+05/09		12:00pm		3:00			worked on the shardMap more.
+05/09		4:00pm		12:00			Workerd on completing the shard_map as well as being able to read in shardMapState from a file
+														This was pretty complicated because I am unfamiliar with working with files in c++. Also to 
+														parse the JSON file I used this library nlohmann/json but that was giving me a lot of trouble
+														with the Bazel build system. I completed the client pool and finished a client implementation
+														that used it and could call to an unimplemented server. This was complicated because of having
+														to figure out how to make Async GRPC calls that simulate the goroutines from lab4. Started
+														working on the server implementation.
+05/10		6:00am		6:00			Finished my server implementation minus the ttl_janitor process. To do this I had to figure
+														out how to use threads in C++. I had some errors occuring that were hard to debug but got them
+														figured out eventually. Wrote up a usage guide for my MVP. 
+05/10		1:30pm		0:45			Looked over submission and turned in.	
+--------------------------------------------------------------------------------------------------------------
+									53:30			TOTAL time spent
+
+My biggest difficulties with this project with my were the novelties. The motivation for this project for me was to get
+familiar with C++ as a language and with gRPC and Concurrency in C++. This was the drving motivation because I will be
+working in C++ this summer with my team at Google.	Because all of this was new, however, I had to dedicate extensive time
+into the learning of these tools. Bazel despite being a pretty simple build system gave my problems in a lot of ways with
+dependancies. It took me a couple of hours just to get grpc integrated with Bazel. The language itself was not easy either.
+I found that I didn't like how verbose it was and I had problems with managing my header files which made little bugs
+difficult to catch since they weren't caught at compile time. I found that this time was really valuable to my personal
+growth with these tools. I now feel comfortable completing projects in C++ and building using bazel. Ultimately I found 
+that go feels much easier and more readable to me and because of my familiarity with it I probably could have focused a
+lot more on implementation rather than learning if I had used go to do something else. Towards the middle of the project
+I realized that my implementation goals were ambitious for one person and that there were thousands of lines of testing
+code that I realized I wasn't going to get to. There was a lot more code than I originally thought just setting up the
+infrastructure to run a server cluster and a client. Overall, I feel that a broadening of my experience in building
+distributed systems by using a completley new language was a good way to end off the class. I feel much more prepared
+for my job this summer as a consequence.
+
+
+
+
