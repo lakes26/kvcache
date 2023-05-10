@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <random>
 #include <vector>
+#include <tuple>
 
 #include <glog/logging.h>
 
@@ -44,7 +45,7 @@ KvClient::KvClient(ShardMap* shardMap, ClientPool* clientPool) {
   this->clientPool = clientPool;
 }
 
-std::string KvClient::Get(const std::string key) {
+std::tuple<std::string, bool, grpc::Status> KvClient::Get(const std::string key) {
   GetRequest request;
   request.set_key(key);
   GetResponse response;
@@ -60,10 +61,11 @@ std::string KvClient::Get(const std::string key) {
 
   if(nodes.size() == 0) {
     LOG(ERROR) << "no nodes hosing shard: " << std::to_string(assignedShardId) << std::endl;
+    return std::make_tuple("", false, Status(grpc::NOT_FOUND, "no nodes hosting that shard"));
   }
 
-  bool wasFound = false;
-  std::string retString = "";
+  Status lastErr;
+  Status status;
   for (const auto& node : nodes) {
 
     // get stub from the client pool
@@ -76,30 +78,17 @@ std::string KvClient::Get(const std::string key) {
     }
 
     // make grpc call using the stub
-    Status status;
-    try {
-      status = stub->Get(&context, request, &response);
-    } catch (std::exception e) {
-      LOG(ERROR) << "GRPC call failed: " << e.what() << std::endl; 
-      continue;
-    }
-
+    status = stub->Get(&context, request, &response);
     if (status.ok()) {
-      if (response.was_found()) {
-        wasFound = true;
-        retString = response.value();
-        break;
-      }
+      return std::make_tuple(response.value(), response.was_found(), Status::OK);
+    } else {
+      lastErr = status;
     }
   }
-  if(!wasFound) {
-    throw std::runtime_error("The value in question was not found");
-  }
-
-  return retString;
+  return std::make_tuple("", false, lastErr);
 }
 
-void KvClient::Set(const std::string key, const std::string value, absl::Duration ttl) {
+grpc::Status KvClient::Set(const std::string key, const std::string value, absl::Duration ttl) {
   SetRequest request;
   request.set_key(key);
   request.set_value(value);
@@ -132,22 +121,22 @@ void KvClient::Set(const std::string key, const std::string value, absl::Duratio
     rpcs[i]->Finish(&responses[i], &statuses[i], (void *) i);
   }
 
+  Status status = Status::OK;
   for (int64_t i = 0; i < nodes.size(); i++) {
     void* got_tag;
     bool ok = false;
     cq.Next(&got_tag, &ok);
     if (ok) {
       int64_t id = (int64_t) got_tag;
-      if  (statuses[id].ok()) {
-        std::cout << "call: " << std::to_string(id) << " recieved status ok from server" << std::endl;
+      if  (!statuses[id].ok()) {
+        status = statuses[id];
       }
     }
-
   }
-
+  return status;
 }
 
-void KvClient::Delete(const std::string key) {
+grpc::Status KvClient::Delete(const std::string key) {
   DeleteRequest request;
   request.set_key(key);
   ClientContext context;
@@ -174,16 +163,18 @@ void KvClient::Delete(const std::string key) {
     rpcs[i]->Finish(&responses[i], &statuses[i], (void *) i);
   }
 
+  Status status = Status::OK;
   for (int64_t i = 0; i < nodes.size(); i++) {
     void* got_tag;
     bool ok = false;
     cq.Next(&got_tag, &ok);
     if (ok) {
       int64_t id = (int64_t) got_tag;
-      if  (statuses[id].ok()) {
-        std::cout << "call: " << std::to_string(id) << " recieved status ok from server" << std::endl;
+      if  (!statuses[id].ok()) {
+        status = statuses[id];
       }
     }
   }
+  return status;
 }
 

@@ -7,6 +7,7 @@
 #include "absl/flags/parse.h"
 #include <string>
 #include <vector>
+#include <tuple>
 
 
 ABSL_FLAG(std::string, shardmap, "",
@@ -63,6 +64,8 @@ int main(int argc, char** argv) {
   std::string subcmd = positional_args[0];
   std::string key = positional_args[1];
 
+  grpc::Status status;
+
   // SET BRANCH
   if (subcmd == "set" && positional_args.size() == 4) {
     std::string value = positional_args[2];
@@ -75,37 +78,37 @@ int main(int argc, char** argv) {
       LOG(FATAL) << "Expected int value for ttlMs" << std::endl;
     }
 
-    try {
-      client.Set(key, value, ttl); 
-    } catch (const std::exception& e) {
-      LOG(ERROR) << "Error setting value: " << e.what() << std::endl;
+    status = client.Set(key, value, ttl); 
+    if(!status.ok()) {
+      LOG(ERROR) << "Error setting value on all nodes hosting shard" << std::endl;
     }
 
   // GET BRANCH
   } else if (subcmd == "get" && positional_args.size() == 2) {
-    std::string value;
-    try {
-      value = client.Get(key); 
+    auto tup = client.Get(key); 
+
+    std::string value = std::get<0>(tup);
+    bool was_found = std::get<1>(tup);
+    status = std::get<2>(tup);
+
+    if(!status.ok()) {
+      LOG(ERROR) << "Error getting value" << std::endl;   
+    } else if (!was_found) {
+      LOG(ERROR) << "No value set for key" << std::endl;   
+    } else {
       std::cout << "value: " << value << std::endl;
-    } catch (const std::exception& e) {
-      LOG(ERROR) << "Error getting value: " << e.what() << std::endl;
     }
 
   // DELETE BRANCH
   } else if (subcmd == "delete" && positional_args.size() == 2) {
-    try {
-      client.Delete(key); 
-      std::cout << "value: " << std::endl;
-    } catch (const std::exception& e) {
-      LOG(ERROR) << "Error deleting value: " << e.what() << std::endl;
+    status = client.Delete(key); 
+    if(!status.ok()) {
+      LOG(ERROR) << "Error deleting value on all nodes hosting shard" << std::endl;
     }
   // DEFAULT BRANCH
   } else {
     usage();
   }
-
   return 0;
 }
-
-
 
