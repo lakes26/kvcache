@@ -5,16 +5,19 @@ This is my implementation of a key value cache.
 ## Building
 
 There are 2 binary targets to this build: //cmd:server and //cmd:client
+
 I was building for darwin_arm64 but I'm fairly confident bazel will build for whatever machine the binary is being built
 on unless specified otherwise.
-
+The build on my local machine was done with Clang
+I am using bazel version 6.0.0 as noted in the src/.bazelversion file which is automatically aquired if you have bazelisk.
+I am building for C++20 as noted in the src/.bazelrc file: build --action_env=BAZEL_CXXOPTS="-std=c++20"
 
 From the src directory (with the WORKSPACE file), Build each by running:
 
-$ bazel build //cdm::server 
-$ bazel build //cdm::client
+$ bazel build //cmd:server 
+$ bazel build //cmd:client
 
-These builds might take a couple of minutes to complete.
+These builds might take a couple of minutes to complete the first time.
 
 
 ## Running

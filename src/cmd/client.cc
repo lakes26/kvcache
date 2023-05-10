@@ -69,13 +69,13 @@ int main(int argc, char** argv) {
   // SET BRANCH
   if (subcmd == "set" && positional_args.size() == 4) {
     std::string value = positional_args[2];
-    int ttlMs;
+    int64_t ttlMs;
     absl::Duration ttl;
     try {
-      ttlMs = std::stoi(positional_args[3]);
+      ttlMs = std::stoll(positional_args[3]);
       ttl = absl::Milliseconds(ttlMs);
     } catch (const std::exception& e) {
-      LOG(FATAL) << "Expected int value for ttlMs" << std::endl;
+      LOG(FATAL) << "Expected long int value for ttlMs" << std::endl;
     }
 
     status = client.Set(key, value, ttl); 
