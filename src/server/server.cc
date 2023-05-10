@@ -1,20 +1,16 @@
 
-#include <iostream>
-#include <memory>
-#include <string>
-
 #include <grpc++/grpc++.h>
-
-#ifdef BAZEL_BUILD
 #include "proto/kv.grpc.pb.h"
-#else
-#include "proto/kv.grpc.pb.h"
-#endif
 
+#include <vector>
+#include <string>
+#include <tuple>
+
+#include "util/util.h"
+#include "shardmap/shardmap.h"
 #include "server.h"
+#include "shard.h"
 
-using grpc::Server;
-using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::Status;
 using kv::GetRequest;
@@ -28,31 +24,72 @@ using kv::GetShardContentsResponse;
 using kv::Kv;
 
 
-KvServerImpl::KvServerImpl(ShardMap* shardMap) {
+KvServerImpl::KvServerImpl(std::string nodeName, ShardMap* shardMap) {
+  this->nodeName = nodeName;
   this->shardMap = shardMap;
+  this->shards = std::vector<KvShard>(shardMap->numShards());
 }
  
+// Get Section -------------------------------
 Status KvServerImpl::Get(
   ServerContext* context,
   const GetRequest* request,
   GetResponse* response
 ) {
+  if (request->key() == "") {
+    return Status(grpc::INVALID_ARGUMENT, "The empty key is not allowed");
+  }
+
+  int id = GetShardForKey(request->key(), shardMap->numShards());
+  if (!isShardHosted(id)) {
+    return Status(grpc::NOT_FOUND, "The shard is not hosted on this node");
+  }
+
+  auto tup = this->shards[id].Get(request->key());
+  response->set_value(std::get<0>(tup));
+  response->set_was_found(std::get<1>(tup));
+
   return Status::OK;
 }
 
+// SET Section -------------------------------
 Status KvServerImpl::Set(
   ServerContext* context,
   const SetRequest* request,
   SetResponse* response
 ) {
+  if (request->key() == "") {
+    return Status(grpc::INVALID_ARGUMENT, "The empty key is not allowed");
+  }
+
+  int id = GetShardForKey(request->key(), shardMap->numShards());
+  if (!isShardHosted(id)) {
+    return Status(grpc::NOT_FOUND, "The shard is not hosted on this node");
+  }
+
+  this->shards[id].Set(request->key(), request->value(), request->ttl_ms());
+
   return Status::OK;
 }
 
+
+// DELETE Section -----------------------------
 Status KvServerImpl::Delete(
   ServerContext* context,
   const DeleteRequest* request,
   DeleteResponse* response
 ) {
+
+  if (request->key() == "") {
+    return Status(grpc::INVALID_ARGUMENT, "The empty key is not allowed");
+  }
+
+  int id = GetShardForKey(request->key(), shardMap->numShards());
+  if (!isShardHosted(id)) {
+    return Status(grpc::NOT_FOUND, "The shard is not hosted on this node");
+  }
+
+  this->shards[id].Delete(request->key());
   return Status::OK;
 }
 
@@ -62,5 +99,15 @@ Status KvServerImpl::GetShardContents(
   GetShardContentsResponse* response
 ) {
   return Status::OK;
+}
+
+
+bool KvServerImpl::isShardHosted(int id) {
+  std::vector<int> v = this->shardMap->shardsForNode(this->nodeName);
+  if (std::find(v.begin(), v.end(), id) != v.end()) {
+    return true;
+  } else {
+    return false;
+  }
 }
  

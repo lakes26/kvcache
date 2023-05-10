@@ -38,10 +38,10 @@ void RunServer() {
   }
   
   // construct server address from the node info
-  ninfo::NodeInfo nodeInfo = it->second; 
+  NodeInfo nodeInfo = it->second; 
   std::string server_address = nodeInfo.address + ":" + std::to_string(nodeInfo.port);
 
-  KvServerImpl service = KvServerImpl(&fileSm.shardMap);
+  KvServerImpl service = KvServerImpl(nodeName, &fileSm.shardMap);
 
   grpc::ServerBuilder builder;
   // Listen on the given address without any authentication mechanism.

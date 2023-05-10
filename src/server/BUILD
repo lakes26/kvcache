@@ -15,6 +15,7 @@ cc_library(
       "//proto:kv_cc_grpc",
       "@com_github_grpc_grpc//:grpc++",
       "//shardmap:shardmap",
+      "//util:util",
   ],
 )
 

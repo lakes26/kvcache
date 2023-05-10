@@ -14,6 +14,7 @@ cc_library(
       "//util:util",
       "//shardmap:shardmap",
       "//clientpool:clientpool",
+      "@com_github_google_glog//:glog",
   ],
 )
 
