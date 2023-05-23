@@ -1,32 +1,20 @@
-
-#include <glog/logging.h>
-#include "src/shardmap/shardmap.h"
-#include "src/clientpool/clientpool.h"
-#include "src/client/client.h"
-#include "absl/flags/flag.h"
-#include "absl/flags/parse.h"
 #include <string>
 #include <vector>
 #include <tuple>
 
+#include <glog/logging.h>
+
+#include "src/clientpool/clientpool.h"
+#include "src/shardmap/shardmap.h"
+#include "src/client/client.h"
+#include "absl/flags/parse.h"
+#include "absl/flags/flag.h"
 
 ABSL_FLAG(std::string, shardmap, "",
           "Path to a JSON file which describes the shard map");
 
 void usage() {
   LOG(FATAL) << "Usage: client [get|set|delete] key [value] [ttl]" << std::endl;
-}
-
-void set(std::string key, std::string value, std::string ttl) {
-    std::cout << "set" << std::endl; 
-}
-
-void get(std::string key) {
-    std::cout << "get" << std::endl;
-}
-
-void deletekey(std::string key) {
-    std::cout << "delete" << std::endl;
 }
 
 int main(int argc, char** argv) {

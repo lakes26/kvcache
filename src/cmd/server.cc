@@ -1,16 +1,16 @@
-#include "absl/flags/flag.h"
-#include "absl/flags/parse.h"
-#include "src/server/server.h"
-#include <grpc++/grpc++.h>
-#include <glog/logging.h>
-#include <string>
-#include "src/shardmap/shardmap.h"
-
 #include <csignal>
 #include <fstream>
 #include <streambuf>
 #include <iostream>
+#include <string>
 
+#include <grpc++/grpc++.h>
+#include <glog/logging.h>
+
+#include "src/shardmap/shardmap.h"
+#include "src/server/server.h"
+#include "absl/flags/parse.h"
+#include "absl/flags/flag.h"
 
 ABSL_FLAG(std::string, shardmap, "",
           "Path to a JSON file which describes the shard map");

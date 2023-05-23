@@ -1,17 +1,17 @@
 #include "server.h"
 
-#include <grpc++/grpc++.h>
-#include "absl/time/time.h"
-
 #include <vector>
 #include <string>
 #include <tuple>
 #include <atomic>
 #include <thread>
 
-#include "src/proto/kv.grpc.pb.h"
-#include "src/util/util.h"
+#include <grpc++/grpc++.h>
+
 #include "src/shardmap/shardmap.h"
+#include "src/proto/kv.grpc.pb.h"
+#include "absl/time/time.h"
+#include "src/util/util.h"
 #include "shard.h"
 
 using grpc::ServerContext;

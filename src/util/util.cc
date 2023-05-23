@@ -1,6 +1,6 @@
+#include <functional>
 #include <cstdint>
 #include <string>
-#include <functional>
 
 int GetShardForKey(const std::string& key, int numShards) {
     std::hash<std::string> hasher;

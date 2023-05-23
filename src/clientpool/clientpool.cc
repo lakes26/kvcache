@@ -1,16 +1,15 @@
 #include "clientpool.h"
 
-#include <grpc++/grpc++.h>
-#include "src/proto/kv.grpc.pb.h"
-#include "absl/synchronization/mutex.h"
-
-#include "src/proto/kv.pb.h"
-#include "src/shardmap/shardmap.h"
-
 #include <string>
 #include <memory>
 #include <stdexcept>
 
+#include <grpc++/grpc++.h>
+
+#include "absl/synchronization/mutex.h"
+#include "src/shardmap/shardmap.h"
+#include "src/proto/kv.grpc.pb.h"
+#include "src/proto/kv.pb.h"
 
 using kv::Kv;
 

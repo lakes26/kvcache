@@ -1,15 +1,17 @@
 #ifndef KV_SERVER_IMPL_H
 #define KV_SERVER_IMPL_H
 
-#include "src/shardmap/shardmap.h"
-#include "absl/synchronization/mutex.h"
-#include "shard.h"
-#include <grpc++/grpc++.h>
-#include "src/proto/kv.grpc.pb.h"
 #include <string>
 #include <vector>
 #include <atomic>
 #include <thread>
+
+#include <grpc++/grpc++.h>
+
+#include "absl/synchronization/mutex.h"
+#include "src/shardmap/shardmap.h"
+#include "src/proto/kv.grpc.pb.h"
+#include "shard.h"
 
 class KvServerImpl final : public kv::Kv::Service {
 private:

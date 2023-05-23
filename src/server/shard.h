@@ -1,11 +1,12 @@
 #ifndef KVSHARD_H
 #define KVSHARD_H
 
+#include <cstdint>
 #include <string>
 #include <tuple>
 #include <map>
+
 #include "absl/synchronization/mutex.h"
-#include <cstdint>
 
 struct CacheRecord {
   std::string value;

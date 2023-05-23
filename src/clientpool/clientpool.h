@@ -1,7 +1,6 @@
 #ifndef CLIENTPOOL_H
 #define CLIENTPOOL_H
 
-
 #include "src/shardmap/shardmap.h"
 #include "src/proto/kv.grpc.pb.h"
 

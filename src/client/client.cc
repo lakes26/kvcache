@@ -10,12 +10,12 @@
 #include <grpc++/grpc++.h>
 #include <glog/logging.h>
 
-#include "src/util/util.h"
 #include "absl/synchronization/mutex.h"
+#include "src/clientpool/clientpool.h"
+#include "src/shardmap/shardmap.h"
 #include "src/proto/kv.grpc.pb.h"
 #include "src/proto/kv.pb.h"
-#include "src/shardmap/shardmap.h"
-#include "src/clientpool/clientpool.h"
+#include "src/util/util.h"
 
 
 using kv::GetRequest;
