@@ -17,25 +17,7 @@
 #include "src/proto/kv.pb.h"
 #include "src/util/util.h"
 
-
-using kv::GetRequest;
-using kv::GetResponse;
-
-using grpc::Server;
-using grpc::ServerBuilder;
-using grpc::ServerContext;
-using grpc::Status;
-using grpc::Channel;
-using grpc::ClientContext;
-
-using kv::GetRequest;
-using kv::GetResponse;
-using kv::SetRequest;
-using kv::SetResponse;
-using kv::DeleteRequest;
-using kv::DeleteResponse;
-using kv::Kv;
-
+namespace kvclient {
 
 KvClient::KvClient(ShardMap* shardMap, ClientPool* clientPool) {
   this->shardMap = shardMap;
@@ -43,10 +25,10 @@ KvClient::KvClient(ShardMap* shardMap, ClientPool* clientPool) {
 }
 
 std::tuple<std::string, bool, grpc::Status> KvClient::Get(const std::string key) {
-  GetRequest request;
+  kv::GetRequest request;
   request.set_key(key);
-  GetResponse response;
-  ClientContext context;
+  kv::GetResponse response;
+  grpc::ClientContext context;
 
   std::random_device rd;
   std::mt19937 g(rd());
@@ -58,15 +40,15 @@ std::tuple<std::string, bool, grpc::Status> KvClient::Get(const std::string key)
 
   if(nodes.size() == 0) {
     LOG(ERROR) << "no nodes hosing shard: " << std::to_string(assignedShardId) << std::endl;
-    return std::make_tuple("", false, Status(grpc::NOT_FOUND, "no nodes hosting that shard"));
+    return std::make_tuple("", false, grpc::Status(grpc::NOT_FOUND, "no nodes hosting that shard"));
   }
 
-  Status lastErr;
-  Status status;
+  grpc::Status lastErr;
+  grpc::Status status;
   for (const auto& node : nodes) {
 
     // get stub from the client pool
-    std::shared_ptr<Kv::Stub> stub;
+    std::shared_ptr<kv::Kv::Stub> stub;
     try {
       stub = this->clientPool->GetClient(node);
     } catch (std::exception e) {
@@ -77,7 +59,7 @@ std::tuple<std::string, bool, grpc::Status> KvClient::Get(const std::string key)
     // make grpc call using the stub
     status = stub->Get(&context, request, &response);
     if (status.ok()) {
-      return std::make_tuple(response.value(), response.was_found(), Status::OK);
+      return std::make_tuple(response.value(), response.was_found(), grpc::Status::OK);
     } else {
       lastErr = status;
     }
@@ -86,15 +68,15 @@ std::tuple<std::string, bool, grpc::Status> KvClient::Get(const std::string key)
 }
 
 grpc::Status KvClient::Set(const std::string key, const std::string value, absl::Duration ttl) {
-  SetRequest request;
+  kv::SetRequest request;
   request.set_key(key);
   request.set_value(value);
 
   int64_t ttlMs = ttl / absl::Milliseconds(1);
   request.set_ttl_ms(ttlMs);
 
-  SetResponse response;
-  ClientContext context;
+  kv::SetResponse response;
+  grpc::ClientContext context;
 
   int assignedShardId = GetShardForKey(key, this->shardMap->numShards());
   std::vector<std::string> nodes = this->shardMap->nodesForShard(assignedShardId);
@@ -106,7 +88,7 @@ grpc::Status KvClient::Set(const std::string key, const std::string value, absl:
   grpc::CompletionQueue cq;
 
   std::vector<grpc::ClientContext> clientContexts(nodes.size());
-  std::vector<std::shared_ptr<Kv::Stub>> clients(nodes.size());
+  std::vector<std::shared_ptr<kv::Kv::Stub>> clients(nodes.size());
   std::vector<std::unique_ptr<grpc::ClientAsyncResponseReader<kv::SetResponse>>> rpcs(nodes.size());
   std::vector<grpc::Status> statuses(nodes.size());
   std::vector<kv::SetResponse> responses(nodes.size());
@@ -118,7 +100,7 @@ grpc::Status KvClient::Set(const std::string key, const std::string value, absl:
     rpcs[i]->Finish(&responses[i], &statuses[i], (void *) i);
   }
 
-  Status status = Status::OK;
+  grpc::Status status = grpc::Status::OK;
   for (int64_t i = 0; i < nodes.size(); i++) {
     void* got_tag;
     bool ok = false;
@@ -134,9 +116,9 @@ grpc::Status KvClient::Set(const std::string key, const std::string value, absl:
 }
 
 grpc::Status KvClient::Delete(const std::string key) {
-  DeleteRequest request;
+  kv::DeleteRequest request;
   request.set_key(key);
-  ClientContext context;
+  grpc::ClientContext context;
 
   int assignedShardId = GetShardForKey(key, this->shardMap->numShards());
   std::vector<std::string> nodes = this->shardMap->nodesForShard(assignedShardId);
@@ -148,7 +130,7 @@ grpc::Status KvClient::Delete(const std::string key) {
   grpc::CompletionQueue cq;
 
   std::vector<grpc::ClientContext> clientContexts(nodes.size());
-  std::vector<std::shared_ptr<Kv::Stub>> clients(nodes.size());
+  std::vector<std::shared_ptr<kv::Kv::Stub>> clients(nodes.size());
   std::vector<std::unique_ptr<grpc::ClientAsyncResponseReader<kv::DeleteResponse>>> rpcs(nodes.size());
   std::vector<grpc::Status> statuses(nodes.size());
   std::vector<kv::DeleteResponse> responses(nodes.size());
@@ -160,7 +142,7 @@ grpc::Status KvClient::Delete(const std::string key) {
     rpcs[i]->Finish(&responses[i], &statuses[i], (void *) i);
   }
 
-  Status status = Status::OK;
+  grpc::Status status = grpc::Status::OK;
   for (int64_t i = 0; i < nodes.size(); i++) {
     void* got_tag;
     bool ok = false;
@@ -175,3 +157,4 @@ grpc::Status KvClient::Delete(const std::string key) {
   return status;
 }
 
+} // namespace kvclient

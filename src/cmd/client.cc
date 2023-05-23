@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
   ClientPool clientPool = ClientPool(&fileSm.shardMap);
 
   // build the KvClient
-  KvClient client = KvClient(&fileSm.shardMap, &clientPool);
+  kvclient::KvClient client = kvclient::KvClient(&fileSm.shardMap, &clientPool);
 
   std::string subcmd = positional_args[0];
   std::string key = positional_args[1];
