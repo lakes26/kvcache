@@ -9,11 +9,11 @@ cc_library(
     "client.h",
   ],
   deps = [
-      "//proto:kv_cc_grpc",
+      "//src/proto:kv_cc_grpc",
       "@com_github_grpc_grpc//:grpc++",
-      "//util:util",
-      "//shardmap:shardmap",
-      "//clientpool:clientpool",
+      "//src/util:util",
+      "//src/shardmap:shardmap",
+      "//src/clientpool:clientpool",
       "@com_github_google_glog//:glog",
   ],
 )

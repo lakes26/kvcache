@@ -1,10 +1,10 @@
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
-#include "server/server.h"
+#include "src/server/server.h"
 #include <grpc++/grpc++.h>
 #include <glog/logging.h>
 #include <string>
-#include "shardmap/shardmap.h"
+#include "src/shardmap/shardmap.h"
 
 #include <csignal>
 #include <fstream>

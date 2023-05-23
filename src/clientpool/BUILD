@@ -7,9 +7,9 @@ cc_library(
     "clientpool.h",
   ],
   deps = [
-    "//shardmap:shardmap",
+    "//src/shardmap:shardmap",
     "@com_google_absl//absl/synchronization",
-    "//proto:kv_cc_grpc",
+    "//src/proto:kv_cc_grpc",
     "@com_github_grpc_grpc//:grpc++",
   ]
 )

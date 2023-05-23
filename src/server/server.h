@@ -1,11 +1,11 @@
 #ifndef KV_SERVER_IMPL_H
 #define KV_SERVER_IMPL_H
 
-#include "shardmap/shardmap.h"
+#include "src/shardmap/shardmap.h"
 #include "absl/synchronization/mutex.h"
 #include "shard.h"
 #include <grpc++/grpc++.h>
-#include "proto/kv.grpc.pb.h"
+#include "src/proto/kv.grpc.pb.h"
 #include <string>
 #include <vector>
 #include <atomic>

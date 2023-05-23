@@ -12,12 +12,12 @@ cc_library(
     "server.h",
   ],
   deps = [
-      "//proto:kv_cc_grpc",
+      "//src/proto:kv_cc_grpc",
       "@com_github_grpc_grpc//:grpc++",
       "@com_google_absl//absl/synchronization",
       "@com_google_absl//absl/time",
-      "//shardmap:shardmap",
-      "//util:util",
+      "//src/shardmap:shardmap",
+      "//src/util:util",
   ],
 )
 

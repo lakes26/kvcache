@@ -2,8 +2,8 @@
 #define CLIENTPOOL_H
 
 
-#include "shardmap/shardmap.h"
-#include "proto/kv.grpc.pb.h"
+#include "src/shardmap/shardmap.h"
+#include "src/proto/kv.grpc.pb.h"
 
 class ClientPool {
 private:

@@ -6,8 +6,8 @@
 
 #include <string.h>
 
-#include "clientpool/clientpool.h"
-#include "shardmap/shardmap.h"
+#include "src/clientpool/clientpool.h"
+#include "src/shardmap/shardmap.h"
 
 
 class KvClient {

@@ -1,11 +1,11 @@
+#include "clientpool.h"
 
 #include <grpc++/grpc++.h>
-#include "proto/kv.grpc.pb.h"
+#include "src/proto/kv.grpc.pb.h"
 #include "absl/synchronization/mutex.h"
 
-#include "proto/kv.pb.h"
-#include "shardmap/shardmap.h"
-#include "clientpool.h"
+#include "src/proto/kv.pb.h"
+#include "src/shardmap/shardmap.h"
 
 #include <string>
 #include <memory>

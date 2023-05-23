@@ -1,8 +1,8 @@
 
 #include <glog/logging.h>
-#include "shardmap/shardmap.h"
-#include "clientpool/clientpool.h"
-#include "client/client.h"
+#include "src/shardmap/shardmap.h"
+#include "src/clientpool/clientpool.h"
+#include "src/client/client.h"
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 #include <string>

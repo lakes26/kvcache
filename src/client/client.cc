@@ -1,24 +1,21 @@
-#include <iostream>
-#include <stdexcept>
-
-#include <grpc++/grpc++.h>
-#include "util/util.h"
-#include "absl/synchronization/mutex.h"
-
-#include "proto/kv.grpc.pb.h"
-#include "proto/kv.pb.h"
-
 #include "client.h"
 
-#include "shardmap/shardmap.h"
-#include "clientpool/clientpool.h"
-
+#include <iostream>
+#include <stdexcept>
 #include <algorithm>
 #include <random>
 #include <vector>
 #include <tuple>
 
+#include <grpc++/grpc++.h>
 #include <glog/logging.h>
+
+#include "src/util/util.h"
+#include "absl/synchronization/mutex.h"
+#include "src/proto/kv.grpc.pb.h"
+#include "src/proto/kv.pb.h"
+#include "src/shardmap/shardmap.h"
+#include "src/clientpool/clientpool.h"
 
 
 using kv::GetRequest;
